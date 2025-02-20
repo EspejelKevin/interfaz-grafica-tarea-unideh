@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aplicación Móvil</title>
+  <!-- Cargar Material Icons desde Google -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    /* Estilos generales */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f7f7f7;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Barra de título */
+    .header {
+      background-color: #3f51b5;
+      color: white;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      margin: 0;
+    }
+
+    /* Menú de navegación superior */
+    .top-nav {
+      display: flex;
+      justify-content: space-around;
+      background-color: #ffffff;
+      padding: 10px 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-btn {
+      background: none;
+      border: none;
+      color: #3f51b5;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .icon {
+      font-size: 22px;
+    }
+
+    /* Campo de búsqueda */
+    .search-container {
+      padding: 10px;
+      background-color: white;
+      text-align: center;
+    }
+
+    #search-input {
+      width: 80%;
+      padding: 8px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    /* Lista de elementos */
+    .item-list {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: 10px;
+    }
+
+    .item-card {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      margin-bottom: 10px;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+    }
+
+    .item-card img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+    }
+
+    .item-card .item-content {
+      flex-grow: 1;
+    }
+
+    .item-card h3 {
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .item-card p {
+      font-size: 14px;
+      color: #777;
+    }
+
+    /* Botones de eliminar y editar */
+    .item-card .action-btns {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .action-btn {
+      background: none;
+      border: none;
+      padding: 8px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background-color 0.3s;
+    }
+
+    .action-btn.delete {
+      color: #f44336;
+    }
+
+    .action-btn.edit {
+      color: #ff9800;
+    }
+
+    .action-btn:hover {
+      background-color: #f0f0f0;
+    }
+
+    /* Botón de acción flotante (FAB) */
+    .fab {
+      position: absolute;
+      right: 20px;
+      bottom: 80px;
+      background-color: #3f51b5;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    /* Barra de navegación inferior */
+    .bottom-nav {
+      display: flex;
+      justify-content: space-around;
+      background-color: #ffffff;
+      padding: 10px 0;
+      border-top: 1px solid #ddd;
+    }
+
+    .bottom-nav-btn {
+      background: none;
+      border: none;
+      color: #3f51b5;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    /* Formulario flotante */
+    .floating-form {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 20;
+    }
+
+    .form-container {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      width: 80%;
+      max-width: 400px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-container input,
+    .form-container textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+    }
+
+    .form-container button {
+      width: 48%;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .btn-add {
+      background-color: #3f51b5;
+      color: white;
+    }
+
+    .btn-cancel {
+      background-color: #f44336;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <!-- Barra de título -->
+  <div class="header">
+    <h1>Mi Aplicación</h1>
+  </div>
+
+  <!-- Menú de navegación superior -->
+  <div class="top-nav">
+    <button class="nav-btn" id="home-btn"><i class="material-icons">home</i> Inicio</button>
+    <button class="nav-btn" id="profile-btn"><i class="material-icons">account_circle</i> Perfil</button>
+    <button class="nav-btn" id="settings-btn"><i class="material-icons">settings</i> Configuración</button>
+  </div>
+
+  <!-- Campo de búsqueda -->
+  <div class="search-container">
+    <input type="text" id="search-input" placeholder="Buscar..." />
+  </div>
+
+  <!-- Lista de elementos -->
+  <div class="item-list" id="item-list">
+    <!-- Los elementos de la lista se generarán dinámicamente con JS -->
+  </div>
+
+  <!-- Botón de acción flotante (FAB) -->
+  <button class="fab" id="fab-btn">+</button>
+
+  <!-- Barra de navegación inferior -->
+  <div class="bottom-nav">
+    <button class="bottom-nav-btn" id="bottom-home"><i class="material-icons">home</i></button>
+    <button class="bottom-nav-btn" id="bottom-search"><i class="material-icons">search</i></button>
+    <button class="bottom-nav-btn" id="bottom-favorite"><i class="material-icons">favorite</i></button>
+    <button class="bottom-nav-btn" id="bottom-settings"><i class="material-icons">settings</i></button>
+  </div>
+
+  <!-- Formulario flotante -->
+  <div class="floating-form" id="floating-form">
+    <div class="form-container">
+      <h2 id="form-title">Nuevo Elemento</h2>
+      <input type="text" id="new-title" placeholder="Título" />
+      <textarea id="new-description" placeholder="Descripción"></textarea>
+      <input type="url" id="new-image-url" placeholder="URL de la imagen" />
+      <div style="display: flex; justify-content: space-between;">
+        <button class="btn-add" id="add-item-btn">Añadir</button>
+        <button class="btn-cancel" id="cancel-form-btn">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Elementos de la lista
+    const items = [
+      { id: 1, title: "Elemento 1", description: "Descripción del elemento 1", img: "https://www.w3schools.com/w3images/avatar2.png" },
+      { id: 2, title: "Elemento 2", description: "Descripción del elemento 2", img: "https://www.w3schools.com/w3images/avatar2.png" },
+      { id: 3, title: "Elemento 3", description: "Descripción del elemento 3", img: "https://www.w3schools.com/w3images/avatar2.png" },
+      { id: 4, title: "Elemento 4", description: "Descripción del elemento 4", img: "https://www.w3schools.com/w3images/avatar2.png" }
+    ];
+
+    // Generación dinámica de la lista
+    const itemList = document.getElementById("item-list");
+
+    function renderList(filteredItems) {
+      itemList.innerHTML = "";
+      filteredItems.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "item-card";
+        card.innerHTML = `
+          <img src="${item.img}" alt="${item.title}" />
+          <div class="item-content">
+            <h3>${item.title}</h3>
+            <p>${item.description}</p>
+          </div>
+          <div class="action-btns">
+            <button class="action-btn edit" onclick="editItem(${item.id})"><i class="material-icons">edit</i></button>
+            <button class="action-btn delete" onclick="deleteItem(${item.id})"><i class="material-icons">delete</i></button>
+          </div>
+        `;
+        itemList.appendChild(card);
+      });
+    }
+
+    // Función para eliminar un item
+    function deleteItem(itemId) {
+      const index = items.findIndex(item => item.id === itemId);
+      if (index !== -1) {
+        items.splice(index, 1);
+        renderList(items);
+      }
+    }
+
+    // Función para editar un item
+    function editItem(itemId) {
+      const item = items.find(item => item.id === itemId);
+      if (item) {
+        document.getElementById("form-title").innerText = "Editar Elemento";
+        document.getElementById("new-title").value = item.title;
+        document.getElementById("new-description").value = item.description;
+        document.getElementById("new-image-url").value = item.img;
+        document.getElementById("floating-form").style.display = "flex";
+
+        // Cambio de comportamiento del botón de agregar a actualizar
+        const addBtn = document.getElementById("add-item-btn");
+        addBtn.textContent = "Actualizar";
+        addBtn.onclick = () => updateItem(itemId);
+      }
+    }
+
+    // Función para actualizar un item
+    function updateItem(itemId) {
+      const title = document.getElementById("new-title").value;
+      const description = document.getElementById("new-description").value;
+      const imgUrl = document.getElementById("new-image-url").value;
+
+      const itemIndex = items.findIndex(item => item.id === itemId);
+      if (itemIndex !== -1) {
+        items[itemIndex] = { id: itemId, title, description, img: imgUrl };
+        renderList(items);
+        cancelForm();
+      }
+    }
+
+    // Función para agregar un nuevo item
+    function addItem() {
+      const title = document.getElementById("new-title").value;
+      const description = document.getElementById("new-description").value;
+      const imgUrl = document.getElementById("new-image-url").value;
+
+      const newItem = { 
+        id: Date.now(), 
+        title, 
+        description, 
+        img: imgUrl 
+      };
+
+      items.push(newItem);
+      renderList(items);
+      cancelForm();
+    }
+
+    // Cancelar el formulario flotante
+    function cancelForm() {
+      document.getElementById("floating-form").style.display = "none";
+      document.getElementById("new-title").value = "";
+      document.getElementById("new-description").value = "";
+      document.getElementById("new-image-url").value = "";
+    }
+
+    // Mostrar el formulario para agregar un nuevo elemento
+    document.getElementById("fab-btn").onclick = () => {
+      document.getElementById("form-title").innerText = "Nuevo Elemento";
+      const addBtn = document.getElementById("add-item-btn");
+      addBtn.textContent = "Añadir";
+      addBtn.onclick = addItem;
+      document.getElementById("floating-form").style.display = "flex";
+    };
+
+    // Filtrar elementos de la lista
+    document.getElementById("search-input").addEventListener("input", (e) => {
+      const searchQuery = e.target.value.toLowerCase();
+      const filteredItems = items.filter(item =>
+        item.title.toLowerCase().includes(searchQuery) ||
+        item.description.toLowerCase().includes(searchQuery)
+      );
+      renderList(filteredItems);
+    });
+
+    // Mostrar alertas en los botones de navegación superior
+    document.getElementById("home-btn").onclick = () => alert("Ir a inicio");
+    document.getElementById("profile-btn").onclick = () => alert("Ir a perfil");
+    document.getElementById("settings-btn").onclick = () => alert("Ir a configuración");
+
+    // Mostrar alertas en los botones de navegación inferior
+    document.getElementById("bottom-home").onclick = () => alert("Ir a inicio");
+    document.getElementById("bottom-search").onclick = () => alert("Buscar");
+    document.getElementById("bottom-favorite").onclick = () => alert("Favoritos");
+    document.getElementById("bottom-settings").onclick = () => alert("Ajustes");
+
+    // Cargar la lista inicial
+    renderList(items);
+  </script>
+</body>
+</html>
